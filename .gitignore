@@ -1,22 +1,32 @@
-# vscode
-.vscode 
+```gitignore
+# VS Code
+.vscode/
 
-# Intellij
+# JetBrains / WebStorm / IntelliJ
+.idea/
 *.iml
-.idea
 
-# npm
-node_modules
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Don't include the compiled main.js file in the repo.
-# They should be uploaded to GitHub releases instead.
-main.js
-
-# Exclude sourcemaps
+# Build files
+src/backgroundColorFiles
 *.map
+dist/
+build/
 
-# obsidian
+# Obsidian local test vault data
 data.json
+workspace.json
 
-# Exclude macOS Finder (System Explorer) View States
+# System files
 .DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+```
