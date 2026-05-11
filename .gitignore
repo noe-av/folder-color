@@ -13,7 +13,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build files
-src/backgroundColorFiles
+src/backgroundColorFiles.txt
 *.map
 dist/
 build/
