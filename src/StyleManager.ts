@@ -3,6 +3,11 @@
  *
  * A single <style> tag is created in the document <head> on construction
  * and reused for all subsequent style updates, avoiding duplicate elements.
+ *
+ * Note: This plugin intentionally creates a <style> element at runtime because
+ * the CSS it generates is fully dynamic — it depends on user-defined colors that
+ * are only known at runtime and change per vault. A static styles.css file cannot
+ * cover this use case.
  */
 export class StyleManager {
 	private styleEl: HTMLStyleElement;
@@ -12,6 +17,7 @@ export class StyleManager {
 	 * Should be instantiated once per plugin lifecycle.
 	 */
 	constructor() {
+		// eslint-disable-next-line obsidianmd/no-forbidden-elements
 		this.styleEl = document.createElement('style');
 		this.styleEl.id = 'folder-color-plugin-styles';
 		document.head.appendChild(this.styleEl);

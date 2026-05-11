@@ -1,47 +1,24 @@
 import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
 import FolderColorPlugin from 'main';
-import { Preset } from 'settings';
+import { FolderColorSettings, Preset } from 'settings';
 
-/**
- * Settings tab shown in Obsidian's plugin settings panel.
- *
- * Provides two sections:
- * - **Configuration**: export and import the full plugin settings as a JSON file.
- * - **Presets**: list all saved color presets with a color preview and a delete action.
- *
- * Note: presets are created from within {@link ColorSettingsModal}, not from this tab.
- * This tab only allows reviewing and deleting them.
- */
 export class FolderColorSettingsTab extends PluginSettingTab {
 	plugin: FolderColorPlugin;
 
-	/**
-	 * @param app - The Obsidian app instance.
-	 * @param plugin - The plugin instance, used to access settings and trigger style updates.
-	 */
 	constructor(app: App, plugin: FolderColorPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
 
-	/**
-	 * Renders the settings tab content.
-	 * Called by Obsidian whenever the tab is opened or needs to be refreshed.
-	 * Clears and rebuilds the entire panel on each call.
-	 */
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Folder Color Plugin' });
+		// ── Export / Import ──────────────────────────────
+		new Setting(containerEl)
+			.setName('Configuration')
+			.setHeading();
 
-		// ── Exportar / Importar ──────────────────────────
-		containerEl.createEl('h3', { text: 'Configuration' });
-
-		/**
-		 * Export button: serializes the full settings object (folders, files, presets)
-		 * to a JSON blob and triggers a browser download.
-		 */
 		new Setting(containerEl)
 			.setName('Export configuration')
 			.setDesc('Save all colors, presets and settings to a JSON file.')
@@ -60,10 +37,6 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 				})
 			);
 
-		/**
-		 * Import button: opens a file picker, reads the selected JSON,
-		 * merges it into the current settings, and refreshes styles and the tab UI.
-		 */
 		new Setting(containerEl)
 			.setName('Import configuration')
 			.setDesc('Load colors and presets from a previously exported JSON file.')
@@ -73,45 +46,45 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 					const input = document.createElement('input');
 					input.type = 'file';
 					input.accept = '.json';
-					input.onchange = async () => {
+					input.onchange = () => {
 						const file = input.files?.[0];
 						if (!file) return;
-						const text = await file.text();
-						try {
-							const parsed = JSON.parse(text);
-							Object.assign(this.plugin.settings, parsed);
-							await this.plugin.saveSettings();
-							this.plugin.styleManager.applyStyles(
-								this.plugin.colorManager.generateStyles()
-							);
-							new Notice('Configuration imported successfully');
-							this.display();
-						} catch {
-							new Notice('Error: invalid JSON file');
-						}
+
+						file.text().then(async (text) => {
+							try {
+								const parsed = JSON.parse(text) as Partial<FolderColorSettings>;
+								Object.assign(this.plugin.settings, parsed);
+								await this.plugin.saveSettings();
+								this.plugin.applyAllStyles();
+								new Notice('Configuration imported successfully');
+								this.display();
+							} catch {
+								new Notice('Error: invalid JSON file');
+							}
+						}).catch(() => {
+							new Notice('Error: could not read file');
+						});
 					};
 					input.click();
 				})
 			);
 
 		// ── Presets ──────────────────────────────────────
-		containerEl.createEl('h3', { text: 'Presets' });
+		new Setting(containerEl)
+			.setName('Presets')
+			.setHeading();
 
 		if (this.plugin.settings.presets.length === 0) {
-			containerEl.createEl('p', { text: 'No presets saved yet.' })
-				.style.cssText = 'color:#888;font-size:13px;';
+			containerEl.createEl('p', { text: 'No presets saved yet.', cls: 'presets-empty' });
 		}
 
-		/**
-		 * Renders one row per preset with:
-		 * - Two color swatches previewing the gradient start and end colors.
-		 * - A delete button that removes the preset and refreshes the tab.
-		 */
 		this.plugin.settings.presets.forEach((preset: Preset, index: number) => {
 			const setting = new Setting(containerEl)
 				.setName(preset.name);
 
-			// Gradient start color preview swatch
+			// Visual preview of the preset's start color.
+			// Inline styles are required here because the color values are user-defined
+			// and cannot be expressed as static CSS classes.
 			const preview = setting.nameEl.createDiv();
 			preview.style.cssText = `
 				display: inline-flex;
@@ -128,7 +101,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 			`;
 			preview.createSpan({ text: 'Aa' });
 
-			// Gradient end color preview swatch
+			// Visual preview of the preset's end color
 			const previewEnd = setting.nameEl.createDiv();
 			previewEnd.style.cssText = `
 				display: inline-flex;

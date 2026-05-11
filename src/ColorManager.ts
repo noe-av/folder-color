@@ -1,4 +1,4 @@
-import { TFolder, TFile } from 'obsidian';
+import { App} from 'obsidian';
 import { FolderColorSettings, ColorConfig } from 'settings';
 
 /**
@@ -11,7 +11,10 @@ import { FolderColorSettings, ColorConfig } from 'settings';
  * - Generating the full CSS string that StyleManager injects into the DOM
  */
 export class ColorManager {
-	constructor(private settings: FolderColorSettings) {}
+	constructor(
+		private app: App,
+		private settings: FolderColorSettings
+	) {}
 
 	/**
 	 * Parses a hex color string into its RGB components.
@@ -100,7 +103,7 @@ export class ColorManager {
 	 * @returns Object with interpolated `bg` and `text` hex color strings.
 	 */
 	getColorForPath(path: string, parentPath: string, config: ColorConfig): { bg: string, text: string } {
-		const allFolders = (window as any).app?.vault?.getAllFolders?.() as TFolder[] ?? [];
+		const allFolders = this.app.vault.getAllFolders();
 
 		// Relative depth of this path below the configured ancestor
 		const level = path.split('/').length - parentPath.split('/').length;
@@ -181,7 +184,7 @@ export class ColorManager {
 		}
 
 		// Pass 2: Subfolders that inherit gradient colors from a configured ancestor
-		const allFolders = (window as any).app?.vault?.getAllFolders?.() as TFolder[] ?? [];
+		const allFolders = this.app.vault.getAllFolders();
 		for (const folder of allFolders) {
 			const path = folder.path;
 			if (this.settings.folders[path]) continue; // already handled in Pass 1
@@ -218,7 +221,7 @@ export class ColorManager {
 		}
 
 		// Pass 3: Files — either from their own config or inherited from their parent folder
-		const allFiles = (window as any).app?.vault?.getFiles?.() as TFile[] ?? [];
+		const allFiles = this.app.vault.getFiles();
 		for (const file of allFiles) {
 			const path = file.path;
 

@@ -14,7 +14,7 @@ import { FolderColorSettings, ColorConfig, FileColorConfig, Preset } from 'setti
 export class ColorSettingsModal extends Modal {
 	private file: TAbstractFile;
 	private settings: FolderColorSettings;
-	private onSubmit: (result: any) => void;
+	private onSubmit: (result: ColorConfig | FileColorConfig | null) => void;
 	private isFolder: boolean;
 
 	/** The config object being edited. Mutated in place by the form controls. */
@@ -31,7 +31,7 @@ export class ColorSettingsModal extends Modal {
 		app: App,
 		file: TAbstractFile,
 		settings: FolderColorSettings,
-		onSubmit: (result: any) => void
+		onSubmit: (result: ColorConfig | FileColorConfig | null) => void
 	) {
 		super(app);
 		this.file = file;
@@ -51,10 +51,10 @@ export class ColorSettingsModal extends Modal {
 				applyToSubfolders: true,
 				applyToFiles: true,
 				applyBgColor: true,
-			} as ColorConfig;
+			} satisfies ColorConfig;
 
 			// Migrate older configs that predate the applyToSubfolders/applyToFiles fields
-			const folderConfig = this.config as ColorConfig;
+			const folderConfig = this.config;
 			if (folderConfig.applyToSubfolders === undefined) {
 				folderConfig.applyToSubfolders = true;
 			}
@@ -70,7 +70,7 @@ export class ColorSettingsModal extends Modal {
 				bold: existingFile?.bold ?? false,
 				italic: existingFile?.italic ?? false,
 				applyBgColor: existingFile?.applyBgColor ?? true,
-			} as FileColorConfig;
+			} satisfies FileColorConfig;
 		}
 	}
 
@@ -109,7 +109,6 @@ export class ColorSettingsModal extends Modal {
 		this.renderCheckbox(container, 'Apply background color', config.applyBgColor ?? true, (val) => {
 			(this.config as ColorConfig).applyBgColor = val;
 		});
-
 		this.renderColorRow(container, 'Background start', config.bgColorStart, (val) => {
 			(this.config as ColorConfig).bgColorStart = val;
 		});
@@ -122,17 +121,16 @@ export class ColorSettingsModal extends Modal {
 		this.renderColorRow(container, 'Text end', config.textColorEnd, (val) => {
 			(this.config as ColorConfig).textColorEnd = val;
 		});
-
 		this.renderCheckbox(container, 'Bold', config.bold, (val) => {
 			(this.config as ColorConfig).bold = val;
 		});
 		this.renderCheckbox(container, 'Italic', config.italic, (val) => {
 			(this.config as ColorConfig).italic = val;
 		});
-		this.renderCheckbox(container, 'Apply to subfolders', (config as ColorConfig).applyToSubfolders ?? true, (val) => {
+		this.renderCheckbox(container, 'Apply to subfolders', config.applyToSubfolders ?? true, (val) => {
 			(this.config as ColorConfig).applyToSubfolders = val;
 		});
-		this.renderCheckbox(container, 'Apply to files', (config as ColorConfig).applyToFiles ?? true, (val) => {
+		this.renderCheckbox(container, 'Apply to files', config.applyToFiles ?? true, (val) => {
 			(this.config as ColorConfig).applyToFiles = val;
 		});
 	}
@@ -149,14 +147,12 @@ export class ColorSettingsModal extends Modal {
 		this.renderCheckbox(container, 'Apply background color', config.applyBgColor ?? true, (val) => {
 			(this.config as FileColorConfig).applyBgColor = val;
 		});
-
 		this.renderColorRow(container, 'Background', config.bgColor, (val) => {
 			(this.config as FileColorConfig).bgColor = val;
 		});
 		this.renderColorRow(container, 'Text color', config.textColor, (val) => {
 			(this.config as FileColorConfig).textColor = val;
 		});
-
 		this.renderCheckbox(container, 'Bold', config.bold, (val) => {
 			(this.config as FileColorConfig).bold = val;
 		});
@@ -167,6 +163,7 @@ export class ColorSettingsModal extends Modal {
 
 	/**
 	 * Renders a labeled color picker row with a live hex value preview.
+	 * Static layout is handled by the `.color-row` CSS class in styles.css.
 	 *
 	 * @param container - The element to render into.
 	 * @param label - Display label shown to the left of the picker.
@@ -175,16 +172,12 @@ export class ColorSettingsModal extends Modal {
 	 */
 	renderColorRow(container: HTMLElement, label: string, value: string, onChange: (val: string) => void) {
 		const row = container.createDiv({ cls: 'color-row' });
-		row.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:10px;';
-
-		row.createEl('label', { text: label }).style.cssText = 'min-width:140px;font-size:14px;';
+		row.createEl('label', { text: label });
 
 		const input = row.createEl('input', { type: 'color' });
 		input.value = value;
-		input.style.cssText = 'width:48px;height:32px;border:none;cursor:pointer;border-radius:4px;';
 
-		const hex = row.createEl('span', { text: value });
-		hex.style.cssText = 'font-size:12px;color:#888;';
+		const hex = row.createEl('span', { text: value, cls: 'color-hex' });
 
 		// Update both the config and the hex label on every change
 		input.oninput = () => {
@@ -195,6 +188,7 @@ export class ColorSettingsModal extends Modal {
 
 	/**
 	 * Renders a labeled checkbox row.
+	 * Static layout is handled by the `.checkbox-row` CSS class in styles.css.
 	 *
 	 * @param container - The element to render into.
 	 * @param label - Display label shown to the right of the checkbox.
@@ -202,14 +196,13 @@ export class ColorSettingsModal extends Modal {
 	 * @param onChange - Callback invoked with the new boolean value on change.
 	 */
 	renderCheckbox(container: HTMLElement, label: string, value: boolean, onChange: (val: boolean) => void) {
-		const row = container.createDiv();
-		row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;';
+		const row = container.createDiv({ cls: 'checkbox-row' });
 
 		const input = row.createEl('input', { type: 'checkbox' });
 		input.checked = value;
 		input.onchange = () => onChange(input.checked);
 
-		row.createEl('label', { text: label }).style.cssText = 'font-size:14px;';
+		row.createEl('label', { text: label });
 	}
 
 	/**
@@ -219,49 +212,45 @@ export class ColorSettingsModal extends Modal {
 	 * each with a delete button. Also provides an input to save the current config
 	 * as a new named preset.
 	 *
+	 * The color previews use inline styles because their values come from user-defined
+	 * color data and cannot be expressed as static CSS classes.
+	 *
 	 * @param container - The element to render into.
 	 */
 	renderPresets(container: HTMLElement) {
 		if (!this.isFolder) return;
 
-		const section = container.createDiv();
-		section.style.cssText = 'margin-top:16px;border-top:1px solid #333;padding-top:12px;';
-		section.createEl('h3', { text: 'Presets' }).style.cssText = 'font-size:14px;margin-bottom:8px;';
+		const section = container.createDiv({ cls: 'presets-section' });
+		section.createEl('h3', { text: 'Presets' });
 
 		if (this.settings.presets.length > 0) {
-			const list = section.createDiv();
-			list.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;';
+			const list = section.createDiv({ cls: 'presets-list' });
 
 			this.settings.presets.forEach((preset: Preset, index: number) => {
 				// Apply button — overwrites the current config and re-renders the modal
-				const btn = list.createEl('button', { text: preset.name });
-				btn.style.cssText = 'padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;';
+				const btn = list.createEl('button', { text: preset.name, cls: 'preset-btn' });
 				btn.onclick = () => {
 					this.config = { ...preset.config };
 					this.onOpen();
 				};
 
 				// Delete button — removes the preset from settings and re-renders
-				const del = list.createEl('button', { text: '×' });
-				del.style.cssText = 'padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;color:red;background:none;border:none;';
+				const del = list.createEl('button', { text: '×', cls: 'preset-delete-btn' });
 				del.onclick = () => {
 					this.settings.presets.splice(index, 1);
 					this.onOpen();
 				};
 			});
 		} else {
-			section.createEl('p', { text: 'No presets saved yet.' }).style.cssText = 'font-size:12px;color:#888;';
+			section.createEl('p', { text: 'No presets saved yet.', cls: 'presets-empty' });
 		}
 
 		// Save current config as a new preset
-		const saveRow = section.createDiv();
-		saveRow.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:8px;';
+		const saveRow = section.createDiv({ cls: 'preset-save-row' });
 
-		const nameInput = saveRow.createEl('input', { type: 'text', placeholder: 'Preset name' });
-		nameInput.style.cssText = 'flex:1;padding:6px 10px;border-radius:4px;font-size:13px;';
+		const nameInput = saveRow.createEl('input', { type: 'text', placeholder: 'Preset name', cls: 'preset-name-input' });
 
-		const saveBtn = saveRow.createEl('button', { text: 'Save preset' });
-		saveBtn.style.cssText = 'padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;';
+		const saveBtn = saveRow.createEl('button', { text: 'Save preset', cls: 'preset-save-btn' });
 		saveBtn.onclick = () => {
 			if (!nameInput.value.trim()) {
 				new Notice('Please enter a preset name');
@@ -269,7 +258,7 @@ export class ColorSettingsModal extends Modal {
 			}
 			this.settings.presets.push({
 				name: nameInput.value.trim(),
-				config: { ...this.config as ColorConfig }
+				config: { ...(this.config as ColorConfig) }
 			});
 			new Notice(`Preset "${nameInput.value.trim()}" saved`);
 			nameInput.value = '';
@@ -286,11 +275,9 @@ export class ColorSettingsModal extends Modal {
 	 * @param container - The element to render into.
 	 */
 	renderActions(container: HTMLElement) {
-		const section = container.createDiv();
-		section.style.cssText = 'margin-top:16px;border-top:1px solid #333;padding-top:12px;display:flex;gap:8px;';
+		const section = container.createDiv({ cls: 'actions-section' });
 
-		const removeBtn = section.createEl('button', { text: '🗑 Remove color' });
-		removeBtn.style.cssText = 'padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;color:#e06c75;';
+		const removeBtn = section.createEl('button', { text: 'Remove color', cls: 'remove-btn' });
 		removeBtn.onclick = () => {
 			if (this.file instanceof TFolder) {
 				delete this.settings.folders[this.file.path];
@@ -302,8 +289,7 @@ export class ColorSettingsModal extends Modal {
 			new Notice('Color removed');
 		};
 
-		const applyBtn = section.createEl('button', { text: '✓ Apply' });
-		applyBtn.style.cssText = 'padding:6px 16px;border-radius:4px;cursor:pointer;font-size:13px;background:#1e40af;color:#fff;border:none;margin-left:auto;';
+		const applyBtn = section.createEl('button', { text: 'Apply', cls: 'apply-btn' });
 		applyBtn.onclick = () => {
 			this.onSubmit(this.config);
 			this.close();

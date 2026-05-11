@@ -1,0 +1,37 @@
+//
+// El background de un archivo ocupa el ancho total
+	/*
+	generateFileStyle(path: string, bg: string, text: string, bold: boolean, italic: boolean, applyBgColor: boolean = true): string {
+		const escapedPath = path.replace(/"/g, '\\"');
+		const isImage = path.endsWith('.jpg') || path.endsWith('.png') ||
+			path.endsWith('.gif') || path.endsWith('.webp');
+
+		return `
+			.nav-file-title[data-path="${escapedPath}"] {
+				background: transparent !important;
+				color: ${text} !important;
+				font-weight: ${bold ? 'bold' : 'normal'} !important;
+				font-style: ${italic ? 'italic' : 'normal'} !important;
+				align-items: center !important;
+			}
+			.nav-file-title[data-path="${escapedPath}"] > .tree-item-inner {
+				background: ${applyBgColor ? bg : 'transparent'} !important;
+				border-radius: ${isImage ? '4px 0 0 4px' : '4px'} !important;
+				padding: 2px 8px !important;
+				flex: 0 1 auto !important;
+				min-width: 0 !important;
+				align-self: center !important;
+				margin-right: 0 !important;
+			}${isImage ? `
+			.nav-file-title[data-path="${escapedPath}"] > .nav-file-tag {
+				background: ${applyBgColor ? bg : 'transparent'} !important;
+				color: ${text} !important;
+				border-radius: 0 4px 4px 0 !important;
+				align-self: stretch !important;
+				display: flex !important;
+				align-items: center !important;
+				margin-right: -8px !important;
+				padding-right: 4px !important;
+			}` : ''}`;
+	}
+	*/

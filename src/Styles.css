@@ -1,0 +1,133 @@
+/* ── Color row (color picker + label) ── */
+.folder-color-modal .color-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 10px;
+}
+
+.folder-color-modal .color-row label {
+	min-width: 140px;
+	font-size: 14px;
+}
+
+.folder-color-modal .color-row input[type="color"] {
+	width: 48px;
+	height: 32px;
+	border: none;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+.folder-color-modal .color-row .color-hex {
+	font-size: 12px;
+	color: #888;
+}
+
+/* ── Checkbox row ── */
+.folder-color-modal .checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.folder-color-modal .checkbox-row label {
+	font-size: 14px;
+}
+
+/* ── Presets section ── */
+.folder-color-modal .presets-section {
+	margin-top: 16px;
+	border-top: 1px solid #333;
+	padding-top: 12px;
+}
+
+.folder-color-modal .presets-section h3 {
+	font-size: 14px;
+	margin-bottom: 8px;
+}
+
+.folder-color-modal .presets-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 10px;
+}
+
+.folder-color-modal .preset-btn {
+	padding: 4px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.folder-color-modal .preset-delete-btn {
+	padding: 4px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 12px;
+	color: red;
+	background: none;
+	border: none;
+}
+
+.folder-color-modal .presets-empty {
+	font-size: 12px;
+	color: #888;
+}
+
+.folder-color-modal .preset-save-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-top: 8px;
+}
+
+.folder-color-modal .preset-name-input {
+	flex: 1;
+	padding: 6px 10px;
+	border-radius: 4px;
+	font-size: 13px;
+}
+
+.folder-color-modal .preset-save-btn {
+	padding: 6px 12px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+/* ── Actions section ── */
+.folder-color-modal .actions-section {
+	margin-top: 16px;
+	border-top: 1px solid #333;
+	padding-top: 12px;
+	display: flex;
+	gap: 8px;
+}
+
+.folder-color-modal .remove-btn {
+	padding: 6px 12px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #e06c75;
+}
+
+.folder-color-modal .apply-btn {
+	padding: 6px 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	background: #1e40af;
+	color: #fff;
+	border: none;
+	margin-left: auto;
+}
+
+/* ── Settings tab ── */
+.folder-color-settings .presets-empty {
+	color: #888;
+	font-size: 13px;
+}
