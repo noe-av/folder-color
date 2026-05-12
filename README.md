@@ -26,7 +26,9 @@ Colorize your file explorer with **gradient colors** that cascade through subfol
 3. Configure the gradient start and end colors, text colors, and any style options.
 4. Click **✓ Apply**.
 
-![Context menu showing "Assign color" option](assets/screenshot-context-menu.png)
+<p align="center">
+  <img src="assets/screenshot-context-menu.png" width="50%" alt="Demo of Folder Color"/>
+</p>
 
 ### Assign a color to a file
 
