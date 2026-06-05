@@ -13,7 +13,7 @@ export default class FolderColorPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.colorManager = new ColorManager(this.app, this.settings);
-		this.styleManager = new StyleManager(this.app);
+		this.styleManager = new StyleManager();
 		this.addSettingTab(new FolderColorSettingsTab(this.app, this));
 		this.applyAllStyles();
 
