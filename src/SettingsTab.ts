@@ -56,8 +56,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 								Object.assign(this.plugin.settings, parsed);
 								await this.plugin.saveSettings();
 								this.plugin.applyAllStyles();
-								new Notice('Configuration imported successfully');
-								this.display();
+								new Notice('Configuration imported successfully. Please reopen this tab to see changes.');
 							} catch {
 								new Notice('Error: invalid JSON file');
 							}
@@ -120,12 +119,12 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 
 			setting.addButton(btn => {
 				btn.setButtonText('Delete');
-				btn.buttonEl.addClass('mod-warning'); // Aplica el estilo rojo destructivo de Obsidian de forma segura
+				btn.buttonEl.addClass('mod-warning'); // Estilo rojo seguro
 				btn.onClick(async () => {
 					this.plugin.settings.presets.splice(index, 1);
 					await this.plugin.saveSettings();
 					new Notice(`Preset "${preset.name}" deleted`);
-					this.display();
+					setting.settingEl.remove();
 				});
 			});
 		});
