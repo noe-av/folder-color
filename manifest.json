@@ -1,8 +1,8 @@
 {
 	"id": "folder-color",
 	"name": "Folder Color",
-	"version": "1.0.7",
-	"minAppVersion": "1.5.11",
+	"version": "1.0.8",
+	"minAppVersion": "1.7.0",
 	"description": "Assign gradient colors to folders and files in the file explorer.",
 	"author": "Noe AV",
 	"authorUrl": "https://github.com/noe-av",
