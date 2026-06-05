@@ -28,7 +28,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 					const data = JSON.stringify(this.plugin.settings, null, 2);
 					const blob = new Blob([data], { type: 'application/json' });
 					const url = URL.createObjectURL(blob);
-					const a = document.createElement('a');
+					const a = activeDocument.createElement('a');
 					a.href = url;
 					a.download = 'folder-color-config.json';
 					a.click();
@@ -43,7 +43,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 			.addButton(btn => btn
 				.setButtonText('Import')
 				.onClick(() => {
-					const input = document.createElement('input');
+					const input = activeDocument.createElement('input');
 					input.type = 'file';
 					input.accept = '.json';
 					input.onchange = () => {
@@ -118,16 +118,16 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 			`;
 			previewEnd.createSpan({ text: 'Aa' });
 
-			setting.addButton(btn => btn
-				.setButtonText('Delete')
-				.setWarning()
-				.onClick(async () => {
+			setting.addButton(btn => {
+				btn.setButtonText('Delete');
+				btn.buttonEl.addClass('mod-warning'); // Aplica el estilo rojo destructivo de Obsidian de forma segura
+				btn.onClick(async () => {
 					this.plugin.settings.presets.splice(index, 1);
 					await this.plugin.saveSettings();
 					new Notice(`Preset "${preset.name}" deleted`);
 					this.display();
-				})
-			);
+				});
+			});
 		});
 	}
 }

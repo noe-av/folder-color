@@ -17,10 +17,10 @@ export class StyleManager {
 	 * Should be instantiated once per plugin lifecycle.
 	 */
 	constructor() {
-		// eslint-disable-next-line obsidianmd/no-forbidden-elements
-		this.styleEl = document.createElement('style');
-		this.styleEl.id = 'folder-color-plugin-styles';
-		document.head.appendChild(this.styleEl);
+		// Usamos 'attr' para pasar el ID de forma totalmente compatible con TypeScript
+		this.styleEl = activeDocument.head.createEl('style', {
+			attr: { id: 'folder-color-plugin-styles' }
+		});
 	}
 
 	/**
