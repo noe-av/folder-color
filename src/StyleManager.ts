@@ -2,7 +2,9 @@ export class StyleManager {
 	private styleEl: HTMLStyleElement | null = null;
 
 	constructor() {
-		const activeDoc = (window as any).activeDocument || document;
+		// Tipamos usando la interfaz nativa de Obsidian extendida sobre el objeto Window
+		const currentWindow = window as Window & { activeDocument?: Document };
+		const activeDoc = currentWindow.activeDocument || document;
 
 		// eslint-disable-next-line obsidianmd/no-forbidden-elements -- Injected style elements are required for dynamic runtime user-defined colors.
 		this.styleEl = activeDoc.head.createEl('style', {
