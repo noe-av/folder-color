@@ -28,7 +28,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 					const data = JSON.stringify(this.plugin.settings, null, 2);
 					const blob = new Blob([data], { type: 'application/json' });
 					const url = URL.createObjectURL(blob);
-					const a = activeDocument.createElement('a');
+					const a = window.activeDocument.createElement('a');
 					a.href = url;
 					a.download = 'folder-color-config.json';
 					a.click();
@@ -43,7 +43,7 @@ export class FolderColorSettingsTab extends PluginSettingTab {
 			.addButton(btn => btn
 				.setButtonText('Import')
 				.onClick(() => {
-					const input = activeDocument.createElement('input');
+					const input = window.activeDocument.createElement('input');
 					input.type = 'file';
 					input.accept = '.json';
 					input.onchange = () => {
